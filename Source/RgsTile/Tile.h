@@ -43,7 +43,14 @@ public:
 	// Method to call to notify when the player steps off this tile.
 	void StepOff();
 
+	// Setting Row and Column indexes of the Tile inside grid
 	void SetRowAndColumn(int32 Row, int32 Column);
+
+	// Setting that the platform has been stepped on at least once
+	void SetFirstTimeStepOn();
+
+	// Hide the Tile from view
+	void Hide();
 
 	// Tile row inside grid
 	int32 GetRowIndex() const;
@@ -51,20 +58,32 @@ public:
 	// Tile Column inside grid
 	int32 GetColumnIndex() const;
 
+	// Check if Tile has already been stepped on
+	bool IsFirstTimeStepping() const;
+
+	
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* MeshComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* BoxCollider;
+
 	UPROPERTY(VisibleAnywhere)
-	float TileSize = 2.f;
+	float TileSize = 2.f;	
 
 protected:
 
 	UPROPERTY(Transient)
 	ETileType TileType = ETileType::Normal;
 
+	//Row Index of the Tile inside grid
 	int32 RowIndex;
 
+	//Column Index of the Tile inside grid
 	int32 ColumnIndex;
+
+	//States if Tile has been already stepped on
+	bool bSteppedOn = false;
 };

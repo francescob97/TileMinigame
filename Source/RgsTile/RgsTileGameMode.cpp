@@ -10,6 +10,7 @@
 #include "Kismet/KismetArrayLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
+#define RAY_TILECHECK_LENGTH 300.f
 
 ARgsTileGameMode::ARgsTileGameMode()
 {
@@ -29,39 +30,106 @@ void ARgsTileGameMode::ResetGame()
 }
 
 int32 ARgsTileGameMode::GetTotalGreenTiles()
-{
-	//TODO: implementation
-	return -1;
+{	
+	return GreenTilesToSpawn;
 }
 
 int32 ARgsTileGameMode::GetGreenTilesFound()
-{
-	//TODO: implementation
-	return -1;
+{	
+	return GreenTilesStepCounter;
 }
 
 int32 ARgsTileGameMode::GetTotalRedTiles()
-{
-	//TODO: implementation
-	return -1;
+{	
+	return RedTilesToSpawn;
 }
 
 int32 ARgsTileGameMode::GetRedTilesFound()
-{
-	//TODO: implementation
-	return -1;
+{	
+	return RedTilesStepCounter;
 }
 
 int32 ARgsTileGameMode::GetClosestGreenTileDistance()
 {
-	//TODO: implementation
-	return -1;
+	if(CheckWinCondition())
+		return -1;
+	
+	return ClosestGreenTileDistance;
 }
 
 int32 ARgsTileGameMode::GetClosestRedTileDistance()
 {
-	//TODO: implementation
-	return -1;
+	if(CheckLoseCondition())
+		return -1;
+	
+	return ClosestRedTileDistance;
+}
+
+void ARgsTileGameMode::CheckSteppedTile()
+{
+	ACharacter* CharRef = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+
+	if(!CharRef) return;
+
+	FVector Start = CharRef->GetActorLocation();
+	FVector End = Start - FVector(0.f, 0.f, RAY_TILECHECK_LENGTH);
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+
+	bool bHit = CharRef->GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_GameTraceChannel1, Params);
+
+	if (!bHit)
+	{
+		if(PrevSteppedTile)
+		{
+			PrevSteppedTile -> StepOff();
+			PrevSteppedTile = nullptr;
+		}		
+		return;
+	}
+			
+	NewSteppedTile = Cast<ATile>(HitResult.GetActor());
+
+	if(PrevSteppedTile != NewSteppedTile)
+	{
+		// Check if first time stepping
+		if(NewSteppedTile && NewSteppedTile->IsFirstTimeStepping())
+		{
+			if(NewSteppedTile->GetType() == ETileType::Green)
+				GreenTilesStepCounter++;
+
+			if(NewSteppedTile->GetType() == ETileType::Red)
+				RedTilesStepCounter++;
+
+			NewSteppedTile->SetFirstTimeStepOn();
+		}
+
+		if(PrevSteppedTile && NewSteppedTile)
+		{
+			PrevSteppedTile->StepOff();
+			NewSteppedTile -> StepOn();
+		}
+		else if(!PrevSteppedTile && NewSteppedTile)
+		{
+			//Stepping off by StartPlatform
+			NewSteppedTile -> StepOn();
+		}
+
+		PrevSteppedTile = NewSteppedTile;
+
+		ClosestGreenTileDistance = TilesGrid->ComputeDistanceToTile(NewSteppedTile->GetRowIndex(), NewSteppedTile->GetColumnIndex(), ETileType::Green);
+		ClosestRedTileDistance = TilesGrid->ComputeDistanceToTile(NewSteppedTile->GetRowIndex(), NewSteppedTile->GetColumnIndex(), ETileType::Red);
+	}	
+}
+
+bool ARgsTileGameMode::CheckWinCondition() const
+{
+	return GreenTilesStepCounter == GreenTilesToSpawn;
+}
+
+bool ARgsTileGameMode::CheckLoseCondition() const
+{
+	return RedTilesStepCounter == RedTilesToSpawn;
 }
 
 void ARgsTileGameMode::BeginPlay()
@@ -83,6 +151,6 @@ void ARgsTileGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//TODO: implementation
+	CheckSteppedTile();	
 }
 

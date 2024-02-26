@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "RgsTileGameMode.generated.h"
 
+enum class ETileType : uint8;
+
 UCLASS(minimalapi)
 class ARgsTileGameMode : public AGameModeBase
 {
@@ -77,9 +79,37 @@ public:
 	TSubclassOf<class ATilesGrid> TileGridClass;
 
 private:
+
+	// Check for a new stepped Tile by Raycast
+	void CheckSteppedTile();	
+
+	// Check if all Green Tiles have been stepped on
+	bool CheckWinCondition() const;
+
+	// Check if all Red Tiles have been stepped on
+	bool CheckLoseCondition() const;		
+	
 	//Tiles Grid Manager Object
 	UPROPERTY()
 	class ATilesGrid* TilesGrid;
+
+	// Green Tiles that have been stepped on at least once
+	int32 GreenTilesStepCounter = 0;
+
+	// Red Tiles that have been stepped on at least once
+	int32 RedTilesStepCounter = 0;
+
+	//Distance to the Green Tile closest to the player
+	int32 ClosestGreenTileDistance = -1;
+
+	//Distance to the Red Tile closest to the player
+	int32 ClosestRedTileDistance = -1;
+
+	UPROPERTY()
+	class ATile* PrevSteppedTile;
+
+	UPROPERTY()
+	class ATile* NewSteppedTile;
 };
 
 
