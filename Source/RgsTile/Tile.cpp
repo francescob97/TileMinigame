@@ -74,3 +74,19 @@ void ATile::StepOff()
 	}
 }
 
+void ATile::SetRowAndColumn(int32 Row, int32 Column)
+{
+	RowIndex = Row;
+	ColumnIndex = Column;
+}
+
+int32 ATile::GetRowIndex() const
+{
+	return RowIndex;
+}
+
+int32 ATile::GetColumnIndex() const
+{
+	return ColumnIndex;
+}
+

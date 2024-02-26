@@ -6,6 +6,9 @@
 #include "Tile.h"
 #include "Kismet/GameplayStatics.h"
 #include "TileHUD.h"
+#include "TilesGrid.h"
+#include "Kismet/KismetArrayLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 ARgsTileGameMode::ARgsTileGameMode()
@@ -66,6 +69,14 @@ void ARgsTileGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	//TODO: implementation
+	TilesGrid = GetWorld()->SpawnActor<ATilesGrid>(TileGridClass, FVector::ZeroVector, FRotator::ZeroRotator);
+
+	if (TilesGrid)
+	{
+		TilesGrid->GenerateGrid(TileGridSize);
+		TilesGrid->InitTilesType(GreenTilesToSpawn, ETileType::Green);
+		TilesGrid->InitTilesType(RedTilesToSpawn, ETileType::Red);
+	}
 }
 
 void ARgsTileGameMode::Tick(float DeltaTime)

@@ -70,6 +70,16 @@ public:
 	// Can be changed in the "TileGameModeBP" blueprint.
 	UPROPERTY(EditDefaultsOnly, Category = Configuration)
 	int32 RedTilesToSpawn = 5;
+
+	//Tiles Grid Manager Object Class
+	//Handles Grid spawning and Tiles Type Initialization
+	UPROPERTY(EditDefaultsOnly, Category = Configuration)
+	TSubclassOf<class ATilesGrid> TileGridClass;
+
+private:
+	//Tiles Grid Manager Object
+	UPROPERTY()
+	class ATilesGrid* TilesGrid;
 };
 
 

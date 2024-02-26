@@ -43,13 +43,28 @@ public:
 	// Method to call to notify when the player steps off this tile.
 	void StepOff();
 
+	void SetRowAndColumn(int32 Row, int32 Column);
+
+	// Tile row inside grid
+	int32 GetRowIndex() const;
+
+	// Tile Column inside grid
+	int32 GetColumnIndex() const;
+
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* MeshComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	float TileSize = 2.f;
+
 protected:
 
 	UPROPERTY(Transient)
 	ETileType TileType = ETileType::Normal;
+
+	int32 RowIndex;
+
+	int32 ColumnIndex;
 };
