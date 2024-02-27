@@ -108,8 +108,8 @@ void ARgsTileGameMode::CheckSteppedTile()
 		}
 		else if(!PrevSteppedTile && NewSteppedTile)
 		{
-			//Stepping off by StartPlatform
-			NewSteppedTile -> StepOn();
+			//e.g. Jumping
+			NewSteppedTile->StepOn();
 		}
 
 		PrevSteppedTile = NewSteppedTile;
@@ -171,6 +171,7 @@ void ARgsTileGameMode::BeginPlay()
 		TilesGrid->SetGridSize(TileGridSize);
 		TilesGrid->CreateGreenTiles(GreenTilesToSpawn);
 		TilesGrid->CreateRedTiles(RedTilesToSpawn);
+		TilesGrid->CreateBlueTiles(BlueTilesToSpawn);
 		TilesGrid->CreateCommonTiles();
 		TilesGrid->ShuffleTilesInGrid();
 		TilesGrid->SpawnGridTiles();
@@ -194,4 +195,3 @@ void ARgsTileGameMode::OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent,
 		ResetGame();
 	}
 }
-

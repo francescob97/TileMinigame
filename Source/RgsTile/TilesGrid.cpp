@@ -3,6 +3,7 @@
 
 #include "TilesGrid.h"
 #include "Tile.h"
+#include "TileBlue.h"
 #include "TileCommon.h"
 #include "TileGreen.h"
 #include "TileRed.h"
@@ -51,6 +52,17 @@ void ATilesGrid::CreateGreenTiles(const int32 GreenTilesToSpawn)
 	}	
 }
 
+void ATilesGrid::CreateBlueTiles(const int32 BlueTilesToSpawn)
+{
+	for(int32 TileCounter = 0; TileCounter < BlueTilesToSpawn; TileCounter++)
+	{
+		ATileBlue* NewTile = GetWorld()->SpawnActor<ATileBlue>(ATileBlue::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
+		NewTile->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		NewTile->TilesGrid = this;
+		TileArray.Add(NewTile);
+	}	
+}
+
 void ATilesGrid::CreateCommonTiles()
 {
 	const int32 MissingTiles = TileGridSize * TileGridSize - TileArray.Num();
@@ -95,6 +107,7 @@ void ATilesGrid::SpawnGridTiles()
 			Tile->SetActorLocation(TilePosition);
 			Tile->SetRowAndColumn(Row + IndexStart, Column + IndexStart);
 
+			//Hide Starting Tile
 			if(Row == 0 && Column == 0)				
 				Tile->Hide();	
 		}
@@ -160,4 +173,22 @@ int32 ATilesGrid::ComputeDistanceToTile(const int32 X, const int32 Y, const ETil
 bool ATilesGrid::CheckOutOfBounds(int Index) const
 {
 	return Index >= 0 && Index < TileGridSize;
+}
+
+void ATilesGrid::ShowAllGreenTiles()
+{
+	for(ATile* Tile : TileArray)
+	{
+		if(Tile->GetType() == ETileType::Green)
+			Tile->StepOn();
+	}
+}
+
+void ATilesGrid::HideAllGreenUnsteppedTiles()
+{
+	for(ATile* Tile : TileArray)
+	{
+		if(Tile->GetType() == ETileType::Green && Tile->IsFirstTimeStepping())
+			Tile->TurnOffTile();
+	}
 }

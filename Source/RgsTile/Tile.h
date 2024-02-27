@@ -11,7 +11,8 @@ enum class ETileType : uint8
 {
 	Common,
 	Green,
-	Red
+	Red,
+	Blue
 };
 
 // Simple implementation of the Tile class.
@@ -37,16 +38,19 @@ public:
 	ETileType GetType() const;
 
 	// Method to call to notify when the player steps on this tile.
-	void StepOn();
+	virtual void StepOn();
 
 	// Method to call to notify when the player steps off this tile.
 	virtual void StepOff();
 
-	// Setting Row and Column indexes of the Tile inside grid
-	void SetRowAndColumn(const int32 Row, const int32 Column);
+	// Turn On Tile color
+	void TurnOnTile() const;
 
-	// Setting that the platform has been stepped on at least once
-	void SetFirstTimeStepOn();
+	// Turn Off Tile color
+	void TurnOffTile() const;
+
+	// Setting Row and Column indexes of the Tile inside grid
+	void SetRowAndColumn(const int32 Row, const int32 Column);	
 
 	// Hide the Tile from view
 	void Hide() const;
@@ -57,9 +61,11 @@ public:
 	// Tile Column inside grid
 	int32 GetColumnIndex() const;
 
+	// Setting that the platform has been stepped on at least once
+	void SetFirstTimeStepOn();
+
 	// Check if Tile has already been stepped on
 	bool IsFirstTimeStepping() const;
-
 	
 public:
 

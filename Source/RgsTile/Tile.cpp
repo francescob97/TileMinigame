@@ -39,8 +39,7 @@ void ATile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	MeshComponent->SetVectorParameterValueOnMaterials(FName("TileBaseColor"), FVector(FColor::Silver));
-	MeshComponent->SetScalarParameterValueOnMaterials(FName("TileEmission"), 0.0f);
+	TurnOffTile();
 }
 
 
@@ -61,13 +60,24 @@ ETileType ATile::GetType() const
 
 void ATile::StepOn()
 {	
-	MeshComponent->SetVectorParameterValueOnMaterials(FName("TileBaseColor"), FVector(ColorToSet));
-	MeshComponent->SetScalarParameterValueOnMaterials(FName("TileEmission"), 1.0f);	
+	TurnOnTile();
 }
 
 void ATile::StepOff()
 {
 
+}
+
+void ATile::TurnOnTile() const
+{
+	MeshComponent->SetVectorParameterValueOnMaterials(FName("TileBaseColor"), FVector(ColorToSet));
+	MeshComponent->SetScalarParameterValueOnMaterials(FName("TileEmission"), 1.0f);	
+}
+
+void ATile::TurnOffTile() const
+{
+	MeshComponent->SetVectorParameterValueOnMaterials(FName("TileBaseColor"), FVector(FColor::Silver));
+	MeshComponent->SetScalarParameterValueOnMaterials(FName("TileEmission"), .0f);	
 }
 
 void ATile::SetRowAndColumn(const int32 Row, const int32 Column)

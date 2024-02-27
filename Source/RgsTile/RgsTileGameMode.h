@@ -78,6 +78,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Configuration)
 	int32 RedTilesToSpawn = 5;
 
+	// Defines the number of Blue Tiles to randomly place in the tile grid.
+	// Can be 0
+	// Can be changed in the "TileGameModeBP" blueprint.
+	UPROPERTY(EditDefaultsOnly, Category = Configuration)
+	int32 BlueTilesToSpawn = 3;
+
 	//Tiles Grid Manager Object Class
 	//Handles Grid spawning and Tiles Type Initialization
 	UPROPERTY(EditDefaultsOnly, Category = Configuration)

@@ -31,6 +31,9 @@ public:
 	// Fill TilesArray with Green Tiles
 	void CreateGreenTiles(const int32 GreenTilesToSpawn);
 
+	// Fill TilesArray with Blue Tiles
+	void CreateBlueTiles(const int32 BlueTilesToSpawn);
+
 	// Fill remaining TilesArray cells with Common Tiles
 	void CreateCommonTiles();
 
@@ -51,6 +54,12 @@ public:
 
 	// Check for Grid Matrix 
 	bool CheckOutOfBounds(int Index) const;
+
+	// Turn on all Green Tiles
+	void ShowAllGreenTiles();
+
+	// Turn off new Green Tiles
+	void HideAllGreenUnsteppedTiles();
 	
 	// Matrix Grid as Row-major
 	UPROPERTY()
