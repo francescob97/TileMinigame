@@ -156,6 +156,11 @@ void ARgsTileGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	check(TileGridSize >= 3);
+	check(GreenTilesToSpawn >= 1);
+	check(RedTilesToSpawn >= 1);
+	check(TileGridSize * TileGridSize >= GreenTilesToSpawn + RedTilesToSpawn);
+
 	OutOfGridTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARgsTileGameMode::OnPlayerOverlap);
 
 	HUD = Cast<ATileHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
