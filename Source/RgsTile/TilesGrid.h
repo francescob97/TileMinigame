@@ -37,6 +37,9 @@ public:
 	// Returns if a Tile is of a certain Type
 	bool CheckTileType(const int32 Row, const int32 Col, const ETileType Type) const;
 
+	// Returns if a Tile is already Stepped on
+	bool CheckTileNeverSteppedOn(const int32 Row, const int32 Col) const;
+	
 	// Check for closest TileType Tile and return distance
 	int32 ComputeDistanceToTile(const int32 X, const int32 Y, const ETileType TileType) const;
 

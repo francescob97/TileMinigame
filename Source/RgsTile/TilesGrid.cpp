@@ -95,6 +95,11 @@ bool ATilesGrid::CheckTileType(const int32 Row, const int32 Col, const ETileType
 	return TileArray[TileGridSize * Row + Col]->GetType() == Type;
 }
 
+bool ATilesGrid::CheckTileNeverSteppedOn(const int32 Row, const int32 Col) const
+{
+	return TileArray[TileGridSize * Row + Col]->IsFirstTimeStepping();
+}
+
 int32 ATilesGrid::ComputeDistanceToTile(const int32 X, const int32 Y, const ETileType TileType) const
 {
 	bool bClosestTileFound = false;
@@ -114,8 +119,10 @@ int32 ATilesGrid::ComputeDistanceToTile(const int32 X, const int32 Y, const ETil
 
 			bClosestTileFound = (CheckOutOfBounds(Y - jx)
 				&& CheckTileType(X - i, Y - jx, TileType))
+				&& CheckTileNeverSteppedOn(X - i, Y - jx)
 			||	(CheckOutOfBounds(Y - jy)
-				&& CheckTileType(X - i, Y - jy, TileType));	
+				&& CheckTileType(X - i, Y - jy, TileType))
+				&& CheckTileNeverSteppedOn(X - i, Y - jy);	
 		}
 
 		for (int i = Dist; i > 0 && !bClosestTileFound; i--)
@@ -128,8 +135,10 @@ int32 ATilesGrid::ComputeDistanceToTile(const int32 X, const int32 Y, const ETil
 
 			bClosestTileFound = (CheckOutOfBounds(Y - jx)
 				&& CheckTileType(X - i, Y - jx, TileType))
+				&& CheckTileNeverSteppedOn(X - i, Y - jx)
 			|| (CheckOutOfBounds(Y - jy)
-				&& CheckTileType(X - i, Y - jy, TileType));		
+				&& CheckTileType(X - i, Y - jy, TileType))
+				&& CheckTileNeverSteppedOn(X - i, Y - jy);		
 		}	
 		Dist++;
 	}
