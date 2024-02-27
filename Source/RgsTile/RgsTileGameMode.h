@@ -6,6 +6,11 @@
 #include "GameFramework/GameModeBase.h"
 #include "RgsTileGameMode.generated.h"
 
+class ATile;
+class ATileHUD;
+class ATilesGrid;
+class UBoxComponent;
+
 enum class ETileType : uint8;
 
 UCLASS(minimalapi)
@@ -76,22 +81,44 @@ public:
 	//Tiles Grid Manager Object Class
 	//Handles Grid spawning and Tiles Type Initialization
 	UPROPERTY(EditDefaultsOnly, Category = Configuration)
-	TSubclassOf<class ATilesGrid> TileGridClass;
+	TSubclassOf<ATilesGrid> TileGridClass;
 
+protected:
+	// On player fall off from Grid
+	UFUNCTION()
+	void OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	// Game HUD
+	UPROPERTY()
+	ATileHUD* HUD;
+	
+	//Tiles Grid Manager Object
+	UPROPERTY()
+	ATilesGrid* TilesGrid;
+
+	// Falling Trigger
+	UPROPERTY()
+	UBoxComponent* OutOfGridTrigger;
+	
 private:
 
 	// Check for a new stepped Tile by Raycast
 	void CheckSteppedTile();	
 
 	// Check if all Green Tiles have been stepped on
-	bool CheckWinCondition() const;
+	void CheckWinCondition();
 
 	// Check if all Red Tiles have been stepped on
-	bool CheckLoseCondition() const;		
-	
-	//Tiles Grid Manager Object
-	UPROPERTY()
-	class ATilesGrid* TilesGrid;
+	void CheckLoseCondition();
+
+	// Game ending with some delay
+	void EndGame();	
+
+	// Timer Handle for ending Game
+	FTimerHandle EndGame_TimerHandle;
+
+	// Seconds to wait for ending game
+	float GameResetWaitSeconds = 5.f;	
 
 	// Green Tiles that have been stepped on at least once
 	int32 GreenTilesStepCounter = 0;
@@ -106,10 +133,10 @@ private:
 	int32 ClosestRedTileDistance = -1;
 
 	UPROPERTY()
-	class ATile* PrevSteppedTile;
+	ATile* PrevSteppedTile;
 
 	UPROPERTY()
-	class ATile* NewSteppedTile;
+	ATile* NewSteppedTile;
 };
 
 

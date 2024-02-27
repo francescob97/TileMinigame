@@ -4,13 +4,12 @@
 #include "RgsTileCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Tile.h"
-#include "Kismet/GameplayStatics.h"
 #include "TileHUD.h"
+#include "Kismet/GameplayStatics.h"
 #include "TilesGrid.h"
-#include "Kismet/KismetArrayLibrary.h"
-#include "Kismet/KismetMathLibrary.h"
+#include "Components/BoxComponent.h"
 
-#define RAY_TILECHECK_LENGTH 300.f
+#define RAY_TILECHECK_LENGTH 100.f
 
 ARgsTileGameMode::ARgsTileGameMode()
 {
@@ -22,6 +21,10 @@ ARgsTileGameMode::ARgsTileGameMode()
 
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	OutOfGridTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("OutOfGridTrigger"));
+	OutOfGridTrigger->SetWorldLocation(FVector(0.f, 0.f, -300.f));
+	OutOfGridTrigger->SetBoxExtent(FVector(TileGridSize * 200.f, TileGridSize * 200.f, 100.f));
 }
 
 void ARgsTileGameMode::ResetGame()
@@ -51,17 +54,11 @@ int32 ARgsTileGameMode::GetRedTilesFound()
 
 int32 ARgsTileGameMode::GetClosestGreenTileDistance()
 {
-	if(CheckWinCondition())
-		return -1;
-	
 	return ClosestGreenTileDistance;
 }
 
 int32 ARgsTileGameMode::GetClosestRedTileDistance()
-{
-	if(CheckLoseCondition())
-		return -1;
-	
+{	
 	return ClosestRedTileDistance;
 }
 
@@ -82,7 +79,7 @@ void ARgsTileGameMode::CheckSteppedTile()
 	{
 		if(PrevSteppedTile)
 		{
-			PrevSteppedTile -> StepOff();
+			PrevSteppedTile->StepOff();
 			PrevSteppedTile = nullptr;
 		}		
 		return;
@@ -122,23 +119,48 @@ void ARgsTileGameMode::CheckSteppedTile()
 	}	
 }
 
-bool ARgsTileGameMode::CheckWinCondition() const
-{
-	return GreenTilesStepCounter == GreenTilesToSpawn;
+void ARgsTileGameMode::CheckWinCondition()
+{	
+	if(GreenTilesStepCounter == GreenTilesToSpawn)
+	{		
+		EndGame();
+	}
 }
 
-bool ARgsTileGameMode::CheckLoseCondition() const
+void ARgsTileGameMode::CheckLoseCondition()
+{	
+	if(RedTilesStepCounter == RedTilesToSpawn)
+	{		
+		EndGame();
+	}	
+}
+
+void ARgsTileGameMode::EndGame()
 {
-	return RedTilesStepCounter == RedTilesToSpawn;
+	if(HUD)
+	{
+		HUD->ShowEndScreen();
+	}	
+	
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		PlayerController->SetIgnoreMoveInput(true);
+		PlayerController->SetIgnoreLookInput(true);
+	}
+	
+	GetWorldTimerManager().SetTimer(EndGame_TimerHandle, this, &ARgsTileGameMode::ResetGame, GameResetWaitSeconds, false);	
 }
 
 void ARgsTileGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//TODO: implementation
-	TilesGrid = GetWorld()->SpawnActor<ATilesGrid>(TileGridClass, FVector::ZeroVector, FRotator::ZeroRotator);
+	OutOfGridTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARgsTileGameMode::OnPlayerOverlap);
 
+	HUD = Cast<ATileHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
+	TilesGrid = GetWorld()->SpawnActor<ATilesGrid>(TileGridClass, FVector::ZeroVector, FRotator::ZeroRotator);
+	
 	if (TilesGrid)
 	{
 		TilesGrid->GenerateGrid(TileGridSize);
@@ -151,6 +173,17 @@ void ARgsTileGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckSteppedTile();	
+	CheckSteppedTile();
+	CheckWinCondition();
+	CheckLoseCondition();
+}
+
+void ARgsTileGameMode::OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor);
+	if (PlayerCharacter)
+	{
+		ResetGame();
+	}
 }
 
