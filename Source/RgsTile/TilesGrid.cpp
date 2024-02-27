@@ -2,8 +2,10 @@
 
 
 #include "TilesGrid.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Tile.h"
+#include "TileCommon.h"
+#include "TileGreen.h"
+#include "TileRed.h"
 
 ATilesGrid::ATilesGrid()
 {
@@ -22,22 +24,64 @@ void ATilesGrid::Tick(float DeltaTime)
 }
 
 
-void ATilesGrid::GenerateGrid(const int32 tileGridSize)
+void ATilesGrid::SetGridSize(const int32 GridSize)
 {
-	TileGridSize = tileGridSize;
-	SpawnGridTiles();
+	TileGridSize = GridSize;
 
-	RandomIndexesCounter = TileGridSize * TileGridSize - 1;
-	
-	for (int32 i = 0; i <= RandomIndexesCounter; i++)
+	CenterTileIndex = (GridSize / 2) * GridSize + GridSize / 2;
+}
+
+void ATilesGrid::CreateRedTiles(const int32 RedTilesToSpawn)
+{
+	for(int32 TileCounter = 0; TileCounter < RedTilesToSpawn; TileCounter++)
 	{
-		if(i != CenterTileIndex)
-			RandomIndexes.Add(i);
+		ATileRed* NewTile = GetWorld()->SpawnActor<ATileRed>(ATileRed::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
+		NewTile->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		TileArray.Add(NewTile);
 	}	
 }
 
-void ATilesGrid::SpawnGridTiles()
+void ATilesGrid::CreateGreenTiles(const int32 GreenTilesToSpawn)
 {
+	for(int32 TileCounter = 0; TileCounter < GreenTilesToSpawn; TileCounter++)
+	{
+		ATileGreen* NewTile = GetWorld()->SpawnActor<ATileGreen>(ATileGreen::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
+		NewTile->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		TileArray.Add(NewTile);
+	}	
+}
+
+void ATilesGrid::CreateCommonTiles()
+{
+	const int32 MissingTiles = TileGridSize * TileGridSize - TileArray.Num();
+	for(int32 TileCounter = 0; TileCounter < MissingTiles; TileCounter++)
+	{
+		ATileCommon* NewTile = GetWorld()->SpawnActor<ATileCommon>(ATileCommon::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
+		NewTile->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		TileArray.Add(NewTile);
+	}	
+}
+
+void ATilesGrid::ShuffleTilesInGrid()
+{
+	const int32 LastIndex = TileArray.Num() - 1;
+	TileArray.Swap(LastIndex, CenterTileIndex);
+	
+	if (TileArray.Num() > 0)
+	{	
+		for (int32 i = 0; i <= LastIndex; i++)
+		{			
+			const int32 Index = FMath::RandRange(i, LastIndex);
+			if (i != Index && Index != CenterTileIndex && i != CenterTileIndex)
+			{
+				TileArray.Swap(i, Index);
+			}			
+		}
+	}
+}
+
+void ATilesGrid::SpawnGridTiles()
+{	
 	const int IndexStart = TileGridSize / 2;
 	const int IndexEnd = TileGridSize % 2 == 0 ? IndexStart - 1 : IndexStart;
 	
@@ -45,54 +89,21 @@ void ATilesGrid::SpawnGridTiles()
 	{
 		for (int32 Column = -IndexStart; Column <= IndexEnd; Column++)
 		{			
-			ATile* NewTile = GetWorld()->SpawnActor<ATile>(TileClass, FVector::ZeroVector, FRotator::ZeroRotator);
-
-			if(NewTile)
-			{
-				FVector TilePosition = FVector(- Row * NewTile->TileSize * 100.f, Column * NewTile->TileSize * 100.f,  - 50.f);			
-				NewTile->SetActorLocation(TilePosition);	
-				NewTile->SetRowAndColumn(Row + IndexStart, Column + IndexStart);
-				NewTile->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-			}				
-
-			if(Row == 0 && Column == 0)
-			{
-				CenterTileIndex = IndexStart * TileGridSize + IndexStart;
-				NewTile->Hide();
-			}				
+			ATile* Tile = TileArray[TileGridSize * (Row + IndexStart) + Column + IndexStart];
 			
-			TileArray.Add(NewTile);			
+			FVector TilePosition = FVector(- Row * Tile->TileSize * 100.f, Column * Tile->TileSize * 100.f,  - 50.f);	
+			Tile->SetActorLocation(TilePosition);
+			Tile->SetRowAndColumn(Row + IndexStart, Column + IndexStart);
+
+			if(Row == 0 && Column == 0)				
+				Tile->Hide();	
 		}
 	}
 }
 
-void ATilesGrid::DestroyGrid()
-{
-	for (const ATile* Tile : TileArray)
-	{
-		
-		//Destroy();
-	}
-
-	TileArray.Reset();
-	TileGridSize = 0;
-}
-
-void ATilesGrid::InitTilesType(const int32 TypeTilesToSpawn, const ETileType Type)
-{	
-	for(int32 TypeCounter = 0; TypeCounter < TypeTilesToSpawn; TypeCounter++)
-	{
-		const int32 Index = UKismetMathLibrary::RandomIntegerInRange(0, RandomIndexesCounter - 1);
-		TileArray[RandomIndexes[Index]]->SetType(Type);
-		
-		RandomIndexes.Swap(Index, RandomIndexesCounter - 1);		
-		RandomIndexesCounter--;
-	}	
-}
-
 bool ATilesGrid::CheckTileType(const int32 Row, const int32 Col, const ETileType Type) const
 {
-	return TileArray[TileGridSize * Row + Col]->GetType() == Type;
+	return TileArray[TileGridSize * Row + Col]->GetType() == Type;	
 }
 
 bool ATilesGrid::CheckTileNeverSteppedOn(const int32 Row, const int32 Col) const

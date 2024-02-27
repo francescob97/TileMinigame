@@ -9,11 +9,10 @@
 UENUM()
 enum class ETileType : uint8
 {
-	Normal,
+	Common,
 	Green,
 	Red
 };
-
 
 // Simple implementation of the Tile class.
 // It consist in a platform sized 2m x 2m x 1m.
@@ -41,16 +40,16 @@ public:
 	void StepOn();
 
 	// Method to call to notify when the player steps off this tile.
-	void StepOff();
+	virtual void StepOff();
 
 	// Setting Row and Column indexes of the Tile inside grid
-	void SetRowAndColumn(int32 Row, int32 Column);
+	void SetRowAndColumn(const int32 Row, const int32 Column);
 
 	// Setting that the platform has been stepped on at least once
 	void SetFirstTimeStepOn();
 
 	// Hide the Tile from view
-	void Hide();
+	void Hide() const;
 
 	// Tile row inside grid
 	int32 GetRowIndex() const;
@@ -71,13 +70,16 @@ public:
 	class UBoxComponent* BoxCollider;
 
 	UPROPERTY(VisibleAnywhere)
-	float TileSize = 2.f;	
+	float TileSize = 2.f;
+
+	UPROPERTY(VisibleAnywhere)
+	FColor ColorToSet = FColor::Silver;
 
 protected:
 
 	UPROPERTY(Transient)
-	ETileType TileType = ETileType::Normal;
-
+	ETileType TileType = ETileType::Common;
+	
 	//Row Index of the Tile inside grid
 	int32 RowIndex;
 

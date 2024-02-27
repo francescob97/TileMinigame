@@ -30,7 +30,7 @@ ATile::ATile()
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BoxCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	BoxCollider->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
-	BoxCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	BoxCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);	
 
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -60,32 +60,17 @@ ETileType ATile::GetType() const
 }
 
 void ATile::StepOn()
-{
-	FColor ColorToSet = FColor::Silver;
-	switch (TileType)
-	{
-	case ETileType::Normal:
-		ColorToSet = FColor::Silver; break;
-	case ETileType::Green:
-		ColorToSet = FColor::Green; break;
-	case ETileType::Red:
-		ColorToSet = FColor::Red; break;
-	}
-
+{	
 	MeshComponent->SetVectorParameterValueOnMaterials(FName("TileBaseColor"), FVector(ColorToSet));
 	MeshComponent->SetScalarParameterValueOnMaterials(FName("TileEmission"), 1.0f);	
 }
 
 void ATile::StepOff()
 {
-	if (TileType == ETileType::Normal)
-	{
-		MeshComponent->SetVectorParameterValueOnMaterials(FName("TileBaseColor"), FVector(FColor::Silver));
-		MeshComponent->SetScalarParameterValueOnMaterials(FName("TileEmission"), 0.0f);
-	}
+
 }
 
-void ATile::SetRowAndColumn(int32 Row, int32 Column)
+void ATile::SetRowAndColumn(const int32 Row, const int32 Column)
 {
 	RowIndex = Row;
 	ColumnIndex = Column;
@@ -111,7 +96,7 @@ void ATile::SetFirstTimeStepOn()
 	bSteppedOn = true;
 }
 
-void ATile::Hide()
+void ATile::Hide() const
 {
 	MeshComponent->SetVisibility(false);
 }

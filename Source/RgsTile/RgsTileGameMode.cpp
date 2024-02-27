@@ -93,10 +93,10 @@ void ARgsTileGameMode::CheckSteppedTile()
 		if(NewSteppedTile && NewSteppedTile->IsFirstTimeStepping())
 		{
 			if(NewSteppedTile->GetType() == ETileType::Green)
-				GreenTilesStepCounter++;
+				GreenTilesStepCounter ++;
 
 			if(NewSteppedTile->GetType() == ETileType::Red)
-				RedTilesStepCounter++;
+				RedTilesStepCounter ++;
 
 			NewSteppedTile->SetFirstTimeStepOn();
 		}
@@ -168,9 +168,12 @@ void ARgsTileGameMode::BeginPlay()
 	
 	if (TilesGrid)
 	{
-		TilesGrid->GenerateGrid(TileGridSize);
-		TilesGrid->InitTilesType(GreenTilesToSpawn, ETileType::Green);
-		TilesGrid->InitTilesType(RedTilesToSpawn, ETileType::Red);
+		TilesGrid->SetGridSize(TileGridSize);
+		TilesGrid->CreateGreenTiles(GreenTilesToSpawn);
+		TilesGrid->CreateRedTiles(RedTilesToSpawn);
+		TilesGrid->CreateCommonTiles();
+		TilesGrid->ShuffleTilesInGrid();
+		TilesGrid->SpawnGridTiles();
 	}
 }
 
