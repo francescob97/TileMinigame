@@ -13,9 +13,9 @@ starting platform, considered as the central element (or at the center in the ca
 Then through a resized window on an auxiliary index vector, it was possible to instantiate in a randomly the various
 Green or Red Tiles, satisfying the constraint of the desired number of Tiles of the respective color.
 
-| <img src="Documentation/1.gif" alt="StreetPCG" style="width:720px;height:405px;"> |
-|:---------------------------------------------------------------------------------:|
-|                               Tile Array Randomizer                               |
+| ![Test Image](Documentation/1.gif) |
+|:----------------------------------:|
+|       Tile Array Randomizer        |
 
 This choice was made because in the case of a large grid, it is possible to randomly extract an index to be assigned to
 the desired tile, rarely incurring the need to repeat the extraction to ensure a single random result.
@@ -27,9 +27,9 @@ sequentially, and finally the array is filled with the common tiles. After that,
 into a Common Tile (swapping it with the last element), all the tiles except from the central one are shuffled.
 Finally, the shuffled Tiles are moved to their respective position around the initial platform, as done previously.
 
-| <img src="Documentation/2.png" alt="StreetPCG" style="width:720px;height:405px;"> | <img src="Documentation/3.png" alt="StreetPCG" style="width:720px;height:405px;"> |
-|:---------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------:|
-|                          Grid with all Tiles turned 0ff                           |                           Grid with all Tiles turned 0n                           |
+| ![Test Image](Documentation/2.png) | ![Test Image](Documentation/3.png) |
+|:----------------------------------:|:----------------------------------:|
+|   Grid with all Tiles turned 0ff   |   Grid with all Tiles turned 0n    |
 
 ### Tile stepping on
 
@@ -47,17 +47,17 @@ end of the game.
 At the end it sets the new tile as the old tile and calculates the distance to the nearest green and red tiles,
 according to the algorithm described next.
 
-| <img src="Documentation/6.gif" alt="BuildingPCG" style="width:640px;height:200px;"> | <img src="Documentation/7.gif" alt="Building" style="width:640px;height:200px;"> |
-|:-----------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|
-|                     Green Tile step on, decreasing the counter                      |               Green Tile step off, staying with the current color                |
+|     ![Test Image](Documentation/6.gif)     |         ![Test Image](Documentation/7.gif)          |
+|:------------------------------------------:|:---------------------------------------------------:|
+| Green Tile step on, decreasing the counter | Green Tile step off, staying with the current color |
 
-| <img src="Documentation/8.gif" alt="BuildingPCG" style="width:640px;height:200px;"> | <img src="Documentation/9.gif" alt="Building" style="width:640px;height:200px;"> |
-|:-----------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|
-|                      Red Tile step on, decreasing the counter                       |                Red Tile step off, staying with the current color                 |
+|    ![Test Image](Documentation/8.gif)    |        ![Test Image](Documentation/9.gif)         |
+|:----------------------------------------:|:-------------------------------------------------:|
+| Red Tile step on, decreasing the counter | Red Tile step off, staying with the current color |
 
-| <img src="Documentation/10.gif" alt="BuildingPCG" style="width:640px;height:200px;"> | <img src="Documentation/11.gif" alt="Building" style="width:640px;height:200px;"> |
-|:------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------:|
-|                    Blue Tile step on, showing all the green tile                     |              Blue Tile step off, hiding green tiles not yet pressed               |
+|      ![Test Image](Documentation/10.gif)      |          ![Test Image](Documentation/11.gif)           |
+|:---------------------------------------------:|:------------------------------------------------------:|
+| Blue Tile step on, showing all the green tile | Blue Tile step off, hiding green tiles not yet pressed |
 
 ### Closest Tile Algorithm
 
@@ -92,9 +92,9 @@ readjust the storing of the Tiles, but still this remains in my opinion a very v
 The algorithm used, however, is the diamond algorithm, i.e., the surroundings of the array are scanned at increasing
 distances,, until the first tile of that color is found.
 
-| <img src="Documentation/12.gif" alt="StreetPCG" style="width:600px;height:500px;"> |
-|:----------------------------------------------------------------------------------:|
-|                                    Diamond scan                                    |
+| ![Test Image](Documentation/12.gif) |
+|:-----------------------------------:|
+|            Diamond scan             |
 
 <br/>
 
@@ -116,9 +116,9 @@ EndScreen is showed, disabling the player controller inputs as well, and through
 In the third case, on the other hand, a BoxComponent was created sufficiently extended below the grid that, in case of
 overlap with the player, immediately restarts the game.
 
-| <img src="Documentation/13.png" alt="StreetPCG" style="width:720px;height:405px;"> |
-|:----------------------------------------------------------------------------------:|
-|                        Box Trigger Component under the Grid                        |
+|  ![Test Image](Documentation/13.png)   |
+|:------------------------------------:|
+| Box Trigger Component under the Grid |
 
 ## Tile Classes
 
