@@ -2,7 +2,6 @@
 
 
 #include "TileBlue.h"
-
 #include "TilesGrid.h"
 
 ATileBlue::ATileBlue()
@@ -15,10 +14,7 @@ void ATileBlue::StepOn()
 {
 	Super::StepOn();
 
-	if(TilesGrid)
-	{
-		TilesGrid->ShowAllGreenTiles();
-	}	
+	ATilesGrid::OnTurnOnAllGreenDelegate.Broadcast();
 }
 
 void ATileBlue::StepOff()
@@ -27,8 +23,5 @@ void ATileBlue::StepOff()
 
 	TurnOffTile();
 
-	if(TilesGrid)
-	{
-		TilesGrid->HideAllGreenUnsteppedTiles();
-	}	
+	ATilesGrid::OnTurnOffAllGreenDelegate.Broadcast();
 }

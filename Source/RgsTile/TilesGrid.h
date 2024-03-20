@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "TilesGrid.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTurnTileDelegate);
+
 class ATile;
 enum class ETileType : uint8;
 
@@ -54,16 +56,13 @@ public:
 
 	// Check for Grid Matrix 
 	bool CheckOutOfBounds(int Index) const;
-
-	// Turn on all Green Tiles
-	void ShowAllGreenTiles();
-
-	// Turn off new Green Tiles
-	void HideAllGreenUnsteppedTiles();
 	
 	// Matrix Grid as Row-major
 	UPROPERTY()
 	TArray<ATile*> TileArray;
+
+	static FOnTurnTileDelegate OnTurnOnAllGreenDelegate;
+	static FOnTurnTileDelegate OnTurnOffAllGreenDelegate;
 
 private:
 

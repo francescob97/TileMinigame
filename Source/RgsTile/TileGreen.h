@@ -16,5 +16,8 @@ class RGSTILE_API ATileGreen : public ATile
 
 public:
 	ATileGreen();
-	
+
+	virtual void BeginPlay() override;
+
+	virtual void StepOff() override;
 };

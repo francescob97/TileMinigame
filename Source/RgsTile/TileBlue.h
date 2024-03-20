@@ -9,6 +9,7 @@
 /**
  * 
  */
+
 UCLASS()
 class RGSTILE_API ATileBlue : public ATile
 {
@@ -23,8 +24,4 @@ public:
 
 	// Method to call to notify when the player steps off this tile.
 	virtual void StepOff() override;
-
-	//Tiles Grid Manager Object
-	UPROPERTY()
-	class ATilesGrid* TilesGrid;
 };

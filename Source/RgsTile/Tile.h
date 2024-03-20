@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTileTurnOnDelegate);
+
 UENUM()
 enum class ETileType : uint8
 {
@@ -38,9 +40,11 @@ public:
 	ETileType GetType() const;
 
 	// Method to call to notify when the player steps on this tile.
+	UFUNCTION()
 	virtual void StepOn();
 
 	// Method to call to notify when the player steps off this tile.
+	UFUNCTION()
 	virtual void StepOff();
 
 	// Turn On Tile color
